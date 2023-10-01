@@ -1,0 +1,16 @@
+version: v1
+plugins:
+  - plugin: go
+    out: gen/go
+    opt: paths=source_relative
+  - plugin: connect-go
+    out: gen/go
+    opt: paths=source_relative
+  - plugin: es
+    # path: node_modules/.bin/protoc-gen-es
+    out: gen/es
+    opt: target=js
+  - plugin: connect-web
+    # path: node_modules/.bin/protoc-gen-connect-web
+    out: gen/es
+    opt: target=js

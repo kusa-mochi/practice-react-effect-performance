@@ -1,0 +1,9 @@
+FROM buildpack-deps:bullseye-curl
+
+ENV LANG C.UTF-8
+ENV LANGUAGE C.UTF-8
+ENV LC_ALL C.UTF-8
+ENV DEBUG_COLORS true
+ENV FORCE_COLOR true
+
+WORKDIR /project

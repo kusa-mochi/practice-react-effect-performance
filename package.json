@@ -1,0 +1,11 @@
+{
+  "name": "practice-react-effect-performance",
+  "version": "1.0.0",
+  "description": "|ポート番号|用途| |:---|:---| |3080|フロントエンドのWebサーバ| |3081|バックエンドI/F（Connectプロトコル）|",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "kusa-mochi",
+  "license": "GPL-2.0-only"
+}

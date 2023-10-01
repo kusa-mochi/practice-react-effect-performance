@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package test.v1;
+
+option go_package = "test_server/gen/go/test_server_interface/v1/test;testv1";
+
+message SubscribeRequest {}
+message Notification {
+    string content = 1;
+}
+
+message GetTestDataRequest {
+    string content = 1;
+}
+message TestData {
+    string content = 1;
+}
+
+service TestService {
+    rpc Subscribe (SubscribeRequest) returns (stream Notification) {}
+    rpc GetTestData(GetTestDataRequest) returns (TestData) {}
+}

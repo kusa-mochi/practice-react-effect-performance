@@ -1,0 +1,62 @@
+version: "3.8"
+services:
+  build_buf:
+    image: whoatemyapplepie/home-server_build-buf:0.8.0
+    build:
+      context: build_buf
+      args:
+        - GO_VERSION=${GO_VERSION}
+        - NODE_VERSION=${NODE_VERSION}
+    volumes:
+      - ../:/project
+    working_dir: /project
+    command: bash -c 'npm i && buf generate && rm -rf ./cmd/client/connect_interfaces/* && cp ./gen/es/test_server_interface/v1/test/* ./cmd/client/connect_interfaces/'
+
+  build_client:
+    image: whoatemyapplepie/home-server_build-client:0.8.0
+    build:
+      context: build_client
+      args:
+        - NODE_VERSION=${NODE_VERSION}
+    depends_on:
+      build_buf:
+        condition: service_completed_successfully
+    volumes:
+      - ../:/project
+    working_dir: /project
+    command: bash -c 'cd ./cmd/client/ && npm ls --depth=0 && npm i && npm run build'
+
+  build_server:
+    image: whoatemyapplepie/home-server_build-server:0.8.0
+    build:
+      context: build_server
+      args:
+        - GO_VERSION=${GO_VERSION}
+    depends_on:
+      build_buf:
+        condition: service_completed_successfully
+    volumes:
+      - ../:/project
+    working_dir: /project
+    command: bash -c 'go mod tidy && cd ./cmd/server/ && env GOOS=linux GOARCH=${GO_ARCH} go build -o test_server'
+
+  build_dist:
+    image: whoatemyapplepie/home-server_build-dist:0.8.0
+    build:
+      context: build_dist
+    depends_on:
+      build_client:
+        condition: service_completed_successfully
+      build_server:
+        condition: service_completed_successfully
+    volumes:
+      - ../:/project
+    working_dir: /project
+    command: bash -c "
+              rm -fr dist/
+              && mkdir -p dist/client
+              && mkdir -p dist/server
+              && cp -r cmd/client/out/* dist/client/
+              && cp cmd/server/test_server dist/server/
+              && cp cmd/server/run.sh dist/server/
+            "
